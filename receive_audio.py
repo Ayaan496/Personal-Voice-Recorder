@@ -6,7 +6,7 @@ import sys
 
 # Change this to your ESP32's serial port
 # Run "ls /dev/ttyUSB*" or "ls /dev/ttyACM*" in terminal to find it
-SERIAL_PORT = "/dev/ttyACM1"  #"/dev/ttyACM0"
+SERIAL_PORT = "/dev/ttyACM0" 
 BAUD_RATE = 921600
 SAMPLE_RATE = 16000
 OUTPUT_FILE = "recording.wav"
@@ -15,8 +15,7 @@ OUTPUT_FILE = "recording.wav"
 
 def save_wav(filename,samples,sample_rate):
     with wave.open(filename, 'w') as wav_file:
-        wav_file.setnchannels(1)
-        wav_file.setnchannels(1)
+        wav_file.setnchannels(2)
         wav_file.setsampwidth(2)
         wav_file.setframerate(sample_rate)
 
