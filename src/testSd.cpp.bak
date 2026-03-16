@@ -1,0 +1,53 @@
+#include <Arduino.h>
+#include <SPI.h>
+#include <SD.h>
+
+#define SD_CS_PIN   10
+#define SD_SCK_PIN  12
+#define SD_MOSI_PIN 2
+#define SD_MISO_PIN 13
+
+void setup() {
+  Serial.begin(115200);
+  while (!Serial);
+
+  Serial.println("\nInitializing SD card...");
+
+  SPI.begin(SD_SCK_PIN, SD_MISO_PIN, SD_MOSI_PIN, SD_CS_PIN);
+
+  if (!SD.begin(SD_CS_PIN)) {
+    Serial.println("Initialization failed. Things to check:");
+    Serial.println("* is a card inserted?");
+    Serial.println("* is your wiring correct?");
+    Serial.println("* is the card formatted as FAT32?");
+    while (1);
+  }
+
+  Serial.println("Wiring is correct and a card is present.");
+
+  Serial.print("Card size: ");
+  Serial.print(SD.cardSize() / (1024 * 1024));
+  Serial.println(" MB");
+
+  Serial.print("Total bytes: ");
+  Serial.println(SD.totalBytes());
+
+  Serial.print("Used bytes: ");
+  Serial.println(SD.usedBytes());
+
+  Serial.println("\nFiles found on card:");
+  File root = SD.open("/");
+  while (true) {
+    File entry = root.openNextFile();
+    if (!entry) break;
+    Serial.print("  ");
+    Serial.print(entry.name());
+    Serial.print(" - ");
+    Serial.println(entry.size());
+    entry.close();
+  }
+  root.close();
+  Serial.println("Done.");
+}
+
+void loop() {}

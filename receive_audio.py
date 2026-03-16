@@ -1,3 +1,4 @@
+#Libraries
 import serial
 import wave
 import struct
@@ -12,14 +13,14 @@ SAMPLE_RATE = 16000
 OUTPUT_FILE = "recording.wav"
 
 
-
+#create file and add data
 def save_wav(filename,samples,sample_rate):
     with wave.open(filename, 'w') as wav_file:
-        wav_file.setnchannels(2)
-        wav_file.setsampwidth(2)
-        wav_file.setframerate(sample_rate)
+        wav_file.setnchannels(2) #two for stereo
+        wav_file.setsampwidth(2) #16bit per sample
+        wav_file.setframerate(sample_rate) #must match esp32 sample rate or else it will be slowed or sped up
 
-        samples_16bit = [max(-32768, min(32767, s >> 10)) for s in samples]
+        samples_16bit = [max(-32768, min(32767, s >> 10)) for s in samples] #change s >> n for volume and how much the mic picks up, smaller is louder while bigger is quieter
         wav_file.writeframes(struct.pack('<' + 'h' * len(samples_16bit), *samples_16bit))
     print(f"Saved {len(samples_16bit)} samples to {filename}")
 
@@ -45,7 +46,7 @@ def main():
 
 
 
-
+        #if detect a start in buffer data, wipe everything before and start from right after the start
         if b"START" in buffer and not recording:
             recording = True
             audio_data = []
@@ -54,7 +55,7 @@ def main():
             print("Recording started...")
 
 
-
+        
         if b"STOP" in buffer and recording:
             stop_index = buffer.index(b"STOP")
             raw = buffer[:stop_index]
